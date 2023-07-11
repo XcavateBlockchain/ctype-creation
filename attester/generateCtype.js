@@ -5,6 +5,7 @@ import * as Kilt from '@kiltprotocol/sdk-js'
 import { generateAccount } from './generateAccount.js'
 import { generateKeypairs } from './generateKeypairs.js'
 import { getCtypeSchema } from './ctypeSchema.js'
+import { updateAuthenticationKey } from './updateAuthenticationKey.js'
 
 export async function ensureStoredCtype(
   attesterAccount,
@@ -53,24 +54,25 @@ export async function ensureStoredCtype(
 
       const accountMnemonic = process.env.SECRET_PAYER_MNEMONIC
       const { account } = generateAccount(accountMnemonic)
-      const { authentication: payerAuthentication } = generateKeypairs(accountMnemonic)
-      const payerAttesterDidUri = Kilt.Did.getFullDidUriFromKey(payerAuthentication)
-
-      const didMnemonic = process.env.SECRET_AUTHENTICATION_MNEMONIC
-      const { authentication, assertionMethod } = generateKeypairs(didMnemonic)
+      const { authentication, assertionMethod } = generateKeypairs(accountMnemonic)
       const attesterDidUri = Kilt.Did.getFullDidUriFromKey(authentication)
+
+      try {
+        // If the did is not fullDid, so it has no authentication key, run this line to update it
+        // await updateAuthenticationKey(account, authentication, assertionMethod, attesterDidUri)
       
-      const encodedFullDid = await api.call.did.query(Kilt.Did.toChain(attesterDidUri))
-      const {document} = Kilt.Did.linkedInfoFromChain(encodedFullDid)
-      const keyId = document.assertionMethod?.[0].id
-
-      console.log('keyUri :: ', `${document.uri}${keyId}`)
-
-      await ensureStoredCtype(account, attesterDidUri, async ({ data }) => ({
-        signature: assertionMethod.sign(data),
-        keyType: assertionMethod.type,
-        keyUri: `${document.uri}${keyId}`
-      }))
+        const encodedFullDid = await api.call.did.query(Kilt.Did.toChain(attesterDidUri))
+        const {document} = Kilt.Did.linkedInfoFromChain(encodedFullDid)
+        const keyId = document.assertionMethod?.[0].id
+  
+        await ensureStoredCtype(account, attesterDidUri, async ({ data }) => ({
+          signature: assertionMethod.sign(data),
+          keyType: assertionMethod.type,
+          keyUri: `${document.uri}${keyId}`
+        }))
+      } catch (error) {
+        throw error
+      }
     } catch (e) {
       console.log('Error while checking on chain ctype')
       throw e
