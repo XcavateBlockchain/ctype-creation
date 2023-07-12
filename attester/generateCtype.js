@@ -48,6 +48,10 @@ export async function ensureStoredCtype(
   ;(async () => {
     envConfig()
 
+    // get $id of a new cType
+    // const ctype = getCtypeSchema()
+    // console.log('$id of cType :: ', Kilt.CType.getIdForSchema(ctype))
+
     try {
       await Kilt.connect(process.env.WSS_ADDRESS)
       const api = Kilt.ConfigService.get('api')
