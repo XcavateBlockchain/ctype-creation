@@ -52,6 +52,10 @@ export async function ensureStoredCtype(
     // const ctype = getCtypeSchema()
     // console.log('$id of cType :: ', Kilt.CType.getIdForSchema(ctype))
 
+    // get ctype with the #id
+    // await Kilt.connect('wss://peregrine.kilt.io/parachain-public-ws')
+    // console.log('cType :: ', await Kilt.CType.fetchFromChain("kilt:ctype:0x4c5ff36428a9cb3d2c20d6cd8419842f08f412b2bdfbbd33ddc2df8120533bcc"))
+
     try {
       await Kilt.connect(process.env.WSS_ADDRESS)
       const api = Kilt.ConfigService.get('api')
