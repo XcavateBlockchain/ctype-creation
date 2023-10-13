@@ -4,7 +4,7 @@ import * as Kilt from '@kiltprotocol/sdk-js'
 
 import { generateAccount } from './generateAccount.js'
 import { generateKeypairs } from './generateKeypairs.js'
-import { getCtypeSchema } from './ctypeSchema.js'
+import { getCompanyCtypeSchema } from './companyCTypeSchema.js'
 import { updateAuthenticationKey } from './updateAuthenticationKey.js'
 
 export async function ensureStoredCtype(
@@ -15,7 +15,7 @@ export async function ensureStoredCtype(
   const api = Kilt.ConfigService.get('api')
 
   // Get the CTYPE and see if it's stored, if yes return it.
-  const ctype = getCtypeSchema()
+  const ctype = getCompanyCtypeSchema()
   try {
     await Kilt.CType.verifyStored(ctype)
     console.log('Ctype already stored. Skipping creation')
@@ -49,12 +49,12 @@ export async function ensureStoredCtype(
     envConfig()
 
     // get $id of a new cType
-    // const ctype = getCtypeSchema()
+    // const ctype = getCompanyCtypeSchema()
     // console.log('$id of cType :: ', Kilt.CType.getIdForSchema(ctype))
 
     // get ctype with the #id
     // await Kilt.connect('wss://peregrine.kilt.io/parachain-public-ws')
-    // console.log('cType :: ', await Kilt.CType.fetchFromChain("kilt:ctype:0x4c5ff36428a9cb3d2c20d6cd8419842f08f412b2bdfbbd33ddc2df8120533bcc"))
+    // console.log('cType :: ', await Kilt.CType.fetchFromChain("kilt:ctype:0xe0854777fe55eca0d87fb2f3cef4b011b42466b010d22c843a249b2eba63590f"))
 
     try {
       await Kilt.connect(process.env.WSS_ADDRESS)
